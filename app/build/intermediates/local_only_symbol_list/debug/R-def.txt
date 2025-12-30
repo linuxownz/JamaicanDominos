@@ -1,9 +1,14 @@
 R_DEF: Internal format may change without notice
 local
 drawable domino_tile
+id boardContainer
 id countText
-id dealButton
-id dominoDisplay
+id header
+id matchScoreText
+id passButton
 id playerHandContainer
 id resetButton
+id turnIndicator
 layout activity_main
+layout activity_splash
+raw smack

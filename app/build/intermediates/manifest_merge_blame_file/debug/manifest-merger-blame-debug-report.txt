@@ -20,54 +20,66 @@
 15-->[androidx.core:core:1.9.0] /home/codespace/.gradle/caches/transforms-4/8b7d7c6033c0ad55d1cbada688971ac0/transformed/core-1.9.0/AndroidManifest.xml:26:22-94
 16
 17    <application
-17-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:3:5-13:19
-18        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-18-->[androidx.core:core:1.9.0] /home/codespace/.gradle/caches/transforms-4/8b7d7c6033c0ad55d1cbada688971ac0/transformed/core-1.9.0/AndroidManifest.xml:28:18-86
-19        android:debuggable="true"
-20        android:extractNativeLibs="false"
-21        android:label="Dominoes App"
-21-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:4:9-37
-22        android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
-22-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:5:9-67
-23        <activity
-23-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:7:9-12:20
-24            android:name="com.example.dominoes.MainActivity"
-24-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:7:19-47
-25            android:exported="true" >
-25-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:7:48-71
-26            <intent-filter>
-26-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:8:13-11:29
-27                <action android:name="android.intent.action.MAIN" />
-27-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:9:17-69
-27-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:9:25-66
-28
-29                <category android:name="android.intent.category.LAUNCHER" />
-29-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:10:17-77
-29-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:10:27-74
-30            </intent-filter>
-31        </activity>
-32
-33        <provider
-33-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/transforms-4/34d931e11ddd2d0b7f6fc7d5d5e38b3f/transformed/emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
-34            android:name="androidx.startup.InitializationProvider"
-34-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/transforms-4/34d931e11ddd2d0b7f6fc7d5d5e38b3f/transformed/emoji2-1.2.0/AndroidManifest.xml:25:13-67
-35            android:authorities="com.example.dominoes.androidx-startup"
-35-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/transforms-4/34d931e11ddd2d0b7f6fc7d5d5e38b3f/transformed/emoji2-1.2.0/AndroidManifest.xml:26:13-68
-36            android:exported="false" >
-36-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/transforms-4/34d931e11ddd2d0b7f6fc7d5d5e38b3f/transformed/emoji2-1.2.0/AndroidManifest.xml:27:13-37
-37            <meta-data
-37-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/transforms-4/34d931e11ddd2d0b7f6fc7d5d5e38b3f/transformed/emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
-38                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-38-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/transforms-4/34d931e11ddd2d0b7f6fc7d5d5e38b3f/transformed/emoji2-1.2.0/AndroidManifest.xml:30:17-75
-39                android:value="androidx.startup" />
-39-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/transforms-4/34d931e11ddd2d0b7f6fc7d5d5e38b3f/transformed/emoji2-1.2.0/AndroidManifest.xml:31:17-49
-40            <meta-data
-40-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/codespace/.gradle/caches/transforms-4/1dc5c357a900d4bd73bf52ddf64cdf6f/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:31:13-33:52
-41                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-41-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/codespace/.gradle/caches/transforms-4/1dc5c357a900d4bd73bf52ddf64cdf6f/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:32:17-78
-42                android:value="androidx.startup" />
-42-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/codespace/.gradle/caches/transforms-4/1dc5c357a900d4bd73bf52ddf64cdf6f/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:33:17-49
-43        </provider>
-44    </application>
-45
-46</manifest>
+17-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:4:5-22:19
+18        android:allowBackup="true"
+18-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:5:9-35
+19        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+19-->[androidx.core:core:1.9.0] /home/codespace/.gradle/caches/transforms-4/8b7d7c6033c0ad55d1cbada688971ac0/transformed/core-1.9.0/AndroidManifest.xml:28:18-86
+20        android:debuggable="true"
+21        android:extractNativeLibs="false"
+22        android:icon="@android:drawable/ic_menu_agenda"
+22-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:7:9-56
+23        android:label="Jamaican Dominoes"
+23-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:6:9-42
+24        android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+24-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:8:9-67
+25        <activity
+25-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:10:9-17:20
+26            android:name="com.example.dominoes.SplashActivity"
+26-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:10:19-49
+27            android:exported="true"
+27-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:12:13-36
+28            android:screenOrientation="landscape" >
+28-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:11:13-50
+29            <intent-filter>
+29-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:13:13-16:29
+30                <action android:name="android.intent.action.MAIN" />
+30-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:14:17-69
+30-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:14:25-66
+31
+32                <category android:name="android.intent.category.LAUNCHER" />
+32-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:15:17-77
+32-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:15:27-74
+33            </intent-filter>
+34        </activity>
+35        <activity
+35-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:19:9-20:53
+36            android:name="com.example.dominoes.MainActivity"
+36-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:19:19-47
+37            android:screenOrientation="landscape" />
+37-->/workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:20:13-50
+38
+39        <provider
+39-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/transforms-4/34d931e11ddd2d0b7f6fc7d5d5e38b3f/transformed/emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
+40            android:name="androidx.startup.InitializationProvider"
+40-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/transforms-4/34d931e11ddd2d0b7f6fc7d5d5e38b3f/transformed/emoji2-1.2.0/AndroidManifest.xml:25:13-67
+41            android:authorities="com.example.dominoes.androidx-startup"
+41-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/transforms-4/34d931e11ddd2d0b7f6fc7d5d5e38b3f/transformed/emoji2-1.2.0/AndroidManifest.xml:26:13-68
+42            android:exported="false" >
+42-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/transforms-4/34d931e11ddd2d0b7f6fc7d5d5e38b3f/transformed/emoji2-1.2.0/AndroidManifest.xml:27:13-37
+43            <meta-data
+43-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/transforms-4/34d931e11ddd2d0b7f6fc7d5d5e38b3f/transformed/emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
+44                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+44-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/transforms-4/34d931e11ddd2d0b7f6fc7d5d5e38b3f/transformed/emoji2-1.2.0/AndroidManifest.xml:30:17-75
+45                android:value="androidx.startup" />
+45-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/transforms-4/34d931e11ddd2d0b7f6fc7d5d5e38b3f/transformed/emoji2-1.2.0/AndroidManifest.xml:31:17-49
+46            <meta-data
+46-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/codespace/.gradle/caches/transforms-4/1dc5c357a900d4bd73bf52ddf64cdf6f/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:31:13-33:52
+47                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+47-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/codespace/.gradle/caches/transforms-4/1dc5c357a900d4bd73bf52ddf64cdf6f/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:32:17-78
+48                android:value="androidx.startup" />
+48-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/codespace/.gradle/caches/transforms-4/1dc5c357a900d4bd73bf52ddf64cdf6f/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:33:17-49
+49        </provider>
+50    </application>
+51
+52</manifest>

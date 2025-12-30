@@ -34,6 +34,14 @@ public class Domino {
 
     @Override
     public String toString() {
-        return side1 + "\n---\n" + side2;
+        return side1 + "\n-\n" + side2;
+    }
+
+    public int getSide1() {
+        return side1;
+    }
+
+    public int getSide2() {
+        return side2;
     }
 }

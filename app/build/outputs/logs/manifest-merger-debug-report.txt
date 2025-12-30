@@ -1,13 +1,14 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:2:1-14:12
-INJECTED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:2:1-14:12
-INJECTED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:2:1-14:12
-INJECTED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:2:1-14:12
+ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:1:1-23:12
+INJECTED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:1:1-23:12
+INJECTED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:1:1-23:12
+INJECTED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:1:1-23:12
 MERGED from [com.google.android.material:material:1.9.0] /home/codespace/.gradle/caches/transforms-4/c8b2366c6953e31ca11bf696c35acef0/transformed/material-1.9.0/AndroidManifest.xml:17:1-26:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/codespace/.gradle/caches/transforms-4/8604d2dfb3accb38fcdd6fb340a5da7b/transformed/constraintlayout-2.1.4/AndroidManifest.xml:2:1-11:12
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /home/codespace/.gradle/caches/transforms-4/7d47aaee4c0e67df4aa5002e81f47b84/transformed/appcompat-resources-1.6.1/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.appcompat:appcompat:1.6.1] /home/codespace/.gradle/caches/transforms-4/60cd596aafa3b3e4afd0c6b6ffb24cd5/transformed/appcompat-1.6.1/AndroidManifest.xml:17:1-22:12
+MERGED from [com.google.android.flexbox:flexbox:3.0.0] /home/codespace/.gradle/caches/transforms-4/5a919b2f0fed04af9270df9c5c1c3645/transformed/flexbox-3.0.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.viewpager2:viewpager2:1.0.0] /home/codespace/.gradle/caches/transforms-4/b36f8ea53928332f72bd8813dd8c1686/transformed/viewpager2-1.0.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.fragment:fragment:1.3.6] /home/codespace/.gradle/caches/transforms-4/057b249d0ae9c1d04d55e12194e6fe81/transformed/fragment-1.3.6/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.activity:activity:1.6.0] /home/codespace/.gradle/caches/transforms-4/bc4a36f370b1342b98c0e54323cbe043/transformed/activity-1.6.0/AndroidManifest.xml:17:1-22:12
@@ -45,16 +46,17 @@ MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /home/c
 MERGED from [androidx.print:print:1.0.0] /home/codespace/.gradle/caches/transforms-4/a6a3d9dfe82667a6c45b0f004ecf5705/transformed/print-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.annotation:annotation-experimental:1.3.0] /home/codespace/.gradle/caches/transforms-4/2bee26b53cfef879caf7fee8c4f2b762/transformed/annotation-experimental-1.3.0/AndroidManifest.xml:17:1-22:12
 	package
+		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:2:5-35
 		INJECTED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml
 	android:versionName
 		INJECTED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml
 	android:versionCode
 		INJECTED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml
 	xmlns:android
-		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:2:11-69
+		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:1:11-69
 application
-ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:3:5-13:19
-INJECTED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:3:5-13:19
+ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:4:5-22:19
+INJECTED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:4:5-22:19
 MERGED from [com.google.android.material:material:1.9.0] /home/codespace/.gradle/caches/transforms-4/c8b2366c6953e31ca11bf696c35acef0/transformed/material-1.9.0/AndroidManifest.xml:24:5-20
 MERGED from [com.google.android.material:material:1.9.0] /home/codespace/.gradle/caches/transforms-4/c8b2366c6953e31ca11bf696c35acef0/transformed/material-1.9.0/AndroidManifest.xml:24:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/codespace/.gradle/caches/transforms-4/8604d2dfb3accb38fcdd6fb340a5da7b/transformed/constraintlayout-2.1.4/AndroidManifest.xml:9:5-20
@@ -74,25 +76,37 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/codes
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.9.0] /home/codespace/.gradle/caches/transforms-4/8b7d7c6033c0ad55d1cbada688971ac0/transformed/core-1.9.0/AndroidManifest.xml:28:18-86
 	android:label
-		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:4:9-37
+		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:6:9-42
+	android:icon
+		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:7:9-56
+	android:allowBackup
+		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:5:9-35
 	android:theme
-		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:5:9-67
-activity#com.example.dominoes.MainActivity
-ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:7:9-12:20
+		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:8:9-67
+activity#com.example.dominoes.SplashActivity
+ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:10:9-17:20
+	android:screenOrientation
+		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:11:13-50
 	android:exported
-		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:7:48-71
+		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:12:13-36
 	android:name
-		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:7:19-47
+		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:10:19-49
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:8:13-11:29
+ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:13:13-16:29
 action#android.intent.action.MAIN
-ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:9:17-69
+ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:14:17-69
 	android:name
-		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:9:25-66
+		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:14:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:10:17-77
+ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:15:17-77
 	android:name
-		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:10:27-74
+		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:15:27-74
+activity#com.example.dominoes.MainActivity
+ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:19:9-20:53
+	android:screenOrientation
+		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:20:13-50
+	android:name
+		ADDED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml:19:19-47
 uses-sdk
 INJECTED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /workspaces/AndroidTestApp/app/src/main/AndroidManifest.xml
@@ -105,6 +119,8 @@ MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /home/codespace/.grad
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /home/codespace/.gradle/caches/transforms-4/7d47aaee4c0e67df4aa5002e81f47b84/transformed/appcompat-resources-1.6.1/AndroidManifest.xml:20:5-44
 MERGED from [androidx.appcompat:appcompat:1.6.1] /home/codespace/.gradle/caches/transforms-4/60cd596aafa3b3e4afd0c6b6ffb24cd5/transformed/appcompat-1.6.1/AndroidManifest.xml:20:5-44
 MERGED from [androidx.appcompat:appcompat:1.6.1] /home/codespace/.gradle/caches/transforms-4/60cd596aafa3b3e4afd0c6b6ffb24cd5/transformed/appcompat-1.6.1/AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.flexbox:flexbox:3.0.0] /home/codespace/.gradle/caches/transforms-4/5a919b2f0fed04af9270df9c5c1c3645/transformed/flexbox-3.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.flexbox:flexbox:3.0.0] /home/codespace/.gradle/caches/transforms-4/5a919b2f0fed04af9270df9c5c1c3645/transformed/flexbox-3.0.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.viewpager2:viewpager2:1.0.0] /home/codespace/.gradle/caches/transforms-4/b36f8ea53928332f72bd8813dd8c1686/transformed/viewpager2-1.0.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.viewpager2:viewpager2:1.0.0] /home/codespace/.gradle/caches/transforms-4/b36f8ea53928332f72bd8813dd8c1686/transformed/viewpager2-1.0.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.fragment:fragment:1.3.6] /home/codespace/.gradle/caches/transforms-4/057b249d0ae9c1d04d55e12194e6fe81/transformed/fragment-1.3.6/AndroidManifest.xml:20:5-22:41

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.dominoes.app-mergeDebugResources-26:/values-ka/values-ka.xml",
+            "outputFile": "com.example.dominoes.app-mergeDebugResources-27:/values-ka/values-ka.xml",
             "map": [
                 {
                     "source": "/home/codespace/.gradle/caches/transforms-4/8b7d7c6033c0ad55d1cbada688971ac0/transformed/core-1.9.0/res/values-ka/values-ka.xml",

@@ -1,10 +1,18 @@
 [
     {
-        "merged": "com.example.dominoes.app-merged_res-28:/drawable_domino_tile.xml.flat",
-        "source": "com.example.dominoes.app-main-30:/drawable/domino_tile.xml"
+        "merged": "com.example.dominoes.app-merged_res-29:/layout_activity_main.xml.flat",
+        "source": "com.example.dominoes.app-main-31:/layout/activity_main.xml"
     },
     {
-        "merged": "com.example.dominoes.app-merged_res-28:/layout_activity_main.xml.flat",
-        "source": "com.example.dominoes.app-main-30:/layout/activity_main.xml"
+        "merged": "com.example.dominoes.app-merged_res-29:/drawable_domino_tile.xml.flat",
+        "source": "com.example.dominoes.app-main-31:/drawable/domino_tile.xml"
+    },
+    {
+        "merged": "com.example.dominoes.app-merged_res-29:/layout_activity_splash.xml.flat",
+        "source": "com.example.dominoes.app-main-31:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "com.example.dominoes.app-merged_res-29:/raw_smack.mp3.flat",
+        "source": "com.example.dominoes.app-main-31:/raw/smack.mp3"
     }
 ]

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.dominoes.app-mergeDebugResources-26:/values-et/values-et.xml",
+            "outputFile": "com.example.dominoes.app-mergeDebugResources-27:/values-et/values-et.xml",
             "map": [
                 {
                     "source": "/home/codespace/.gradle/caches/transforms-4/60cd596aafa3b3e4afd0c6b6ffb24cd5/transformed/appcompat-1.6.1/res/values-et/values-et.xml",
