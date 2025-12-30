@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.RectF;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
@@ -40,6 +41,8 @@ public class MainActivity extends Activity {
     private int teamHumanSets = 0, teamOpponentSets = 0;
     private SoundPool soundPool;
     private int smackId;
+    private int soundClick;
+    private int soundKnock;
 
     private int leftX, leftY, rightX, rightY;
     private int dirL = -1, dirR = 1;  
@@ -47,7 +50,10 @@ public class MainActivity extends Activity {
     private int lastWidthL = 0, lastWidthR = 0;
     private int currentLeftX, currentRightX; // These track the exact "tips" of the snake
 
-
+    private ArrayList<Point> pathPoints = new ArrayList<>();
+    private int leftPathIdx = 14; // Middle of the 30-point path
+    private int rightPathIdx = 15; // Starting point for the first move to the right
+    private ArrayList<Integer> pathDirections = new ArrayList<>();
     private ArrayList<ArrayList<Domino>> allHands = new ArrayList<>();
 
     @Override
@@ -70,7 +76,8 @@ public class MainActivity extends Activity {
     
         findViewById(R.id.passButton).setOnClickListener(v -> handleHumanPass());
         findViewById(R.id.resetButton).setOnClickListener(v -> setupJamaicanGame());
-    
+
+        generatePath();
         setupJamaicanGame();
     }
 
@@ -80,26 +87,14 @@ public class MainActivity extends Activity {
         playerHandContainer.removeAllViews();
         boardContainer.removeAllViews();
         
+        leftPathIdx = 20; 
+        rightPathIdx = 21;
+
         boardLeft = -1; boardRight = -1;
         dirL = -1; dirR = 1;
         consecutivePasses = 0;
         gameActive = true;
         lastPlayedTile = null;
-
-        float den = getResources().getDisplayMetrics().density;
-        int screenW = getResources().getDisplayMetrics().widthPixels;
-        int screenH = getResources().getDisplayMetrics().heightPixels;
-    
-        leftX = (screenW / 2) - (int)(30 * den); 
-        rightX = leftX;
-        leftY = (screenH / 2) - (int)(40 * den); 
-        rightY = leftY;
-    
-        int startX = (screenW / 2) - (int)(27 * den); // Center of a horizontal tile
-        currentLeftX = startX;
-        currentRightX = startX;
-        leftX = startX;
-        rightX = startX;
 
         for (int p = 0; p < 4; p++) {
             ArrayList<Domino> hand = new ArrayList<>();
@@ -168,19 +163,7 @@ public class MainActivity extends Activity {
                 dv.setAlpha(0.5f);
                 turnIndicator.setText("TAP LEFT OR RIGHT SIDE OF BOARD");
 
-                boardContainer.setOnTouchListener((vB, event) -> {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        float touchX = event.getX();
-                        boolean choseLeft = (touchX < vB.getWidth() / 2);
 
-                        // Reset UI and play
-                        isWaitingForSideChoice = false;
-                        dv.setAlpha(1.0f);
-                        boardContainer.setOnTouchListener(null);
-                        playTile(d, dv, choseLeft, 0);
-                    }
-                    return true;
-                });
             } else if (mL) {
                 playTile(d, dv, true, 0); // Only matches left
             } else if (mR) {
@@ -271,102 +254,133 @@ public class MainActivity extends Activity {
 } 
 
 private void addTileToVisualBoard(Domino d, boolean atLeft) {
-    boolean isDbl = (d.getSide1() == d.getSide2());
-    int matchVal = atLeft ? boardLeft : boardRight;
+    int idx;
+    if (boardLeft == -1) {
+        idx = 20; 
+    } else {
+        idx = atLeft ? --leftPathIdx : rightPathIdx++;
+    }
 
-    // Identify which side of the domino touches the board
+    if (idx < 0) idx = 0;
+    if (idx >= pathPoints.size()) idx = pathPoints.size() - 1;
+
+    Point p = pathPoints.get(idx);
+    int currentDir = pathDirections.get(idx); 
+    float den = getResources().getDisplayMetrics().density;
+
+    boolean isDbl = (d.getSide1() == d.getSide2());
+    
+    // 1. Calculate Pip Orientation
+    int matchVal = atLeft ? boardLeft : boardRight;
     int inner = (matchVal == -1) ? d.getSide1() : (d.getSide1() == matchVal ? d.getSide1() : d.getSide2());
     int outer = (inner == d.getSide1()) ? d.getSide2() : d.getSide1();
 
-    float den = getResources().getDisplayMetrics().density;
-    int screenW = getResources().getDisplayMetrics().widthPixels;
-
-    // Determine orientation: Doubles are always vertical.
-    // Otherwise, it's horizontal unless we are in a "wrap" row.
-    boolean vert = isDbl;
-    int w = vert ? (int) (30 * den) : (int) (54 * den);
-    int h = vert ? (int) (54 * den) : (int) (30 * den);
-
-    int finalX, finalY;
-
-    if (boardLeft == -1) {
-        // First Tile (Pose)
-        finalX = (screenW / 2) - (w / 2);
-        finalY = leftY; // Controlled by your "lower the table" variable
-        currentLeftX = finalX;
-        currentRightX = finalX + w;
-    } else if (atLeft) {
-        // --- LEFT SIDE LOGIC ---
-        currentLeftX -= w; // Grow left by subtracting width
-        finalX = currentLeftX;
-        finalY = leftY;
-
-        // Wrap Logic for Left
-        if (finalX < (int) (20 * den)) {
-            leftY += (int) (60 * den); // Move down
-            currentLeftX = finalX + w; // Reset anchor for next tile
-            // In a real wrap, we'd flip direction, but let's keep it simple first
-        }
-    } else {
-        // --- RIGHT SIDE LOGIC ---
-        finalX = currentRightX;
-        finalY = rightY;
-        currentRightX += w;
-
-        // Wrap Logic for Right
-        if (currentRightX > (screenW - (int) (80 * den))) {
-            rightY += (int) (60 * den);
-        }
-    }
-
-    // --- THE ORIENTATION FIX ---
-    // v1 is the "first" half of the tile (top or left), v2 is the "second" (bottom
-    // or right)
     int v1, v2;
-    if (vert) {
-        // Vertical: Inner touches the board.
-        // If playing Left, inner is at the bottom. If playing Right, inner is at the
-        // top.
-        v1 = atLeft ? outer : inner;
-        v2 = atLeft ? inner : outer;
-    } else {
-        // Horizontal:
-        // If playing LEFT: [Outer | Inner] -> Inner touches the board on the right side
-        // of the tile
-        // If playing RIGHT: [Inner | Outer] -> Inner touches the board on the left side
-        // of the tile
-        v1 = atLeft ? outer : inner;
-        v2 = atLeft ? inner : outer;
+    if (!atLeft) { // RIGHT SIDE
+        if (currentDir == 1) { v1 = inner; v2 = outer; }
+        else { v1 = outer; v2 = inner; }
+    } else { // LEFT SIDE
+        // If currentDir is -1 (Left), the 'inner' pip must be on the right (v2)
+        if (currentDir == -1) { v1 = outer; v2 = inner; }
+        else { v1 = inner; v2 = outer; }
     }
 
-    DominoView dv = new DominoView(this, v1, v2, vert, false);
-    RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(w, h);
-    p.leftMargin = finalX;
-    p.topMargin = finalY;
-    dv.setLayoutParams(p);
+    // 2. Create the View (Named 'dv' so the rest of the code works)
+    DominoView dv = new DominoView(this, v1, v2, isDbl, false);
 
-    // Highlight the move
-    if (lastPlayedTile != null)
-        lastPlayedTile.setBackgroundColor(Color.TRANSPARENT);
-    dv.setBackgroundColor(Color.argb(40, 255, 255, 0));
+    // 3. Dimensions
+    int longSide = (int) (48 * den);
+    int shortSide = (int) (30 * den);
+    
+    int w = isDbl ? shortSide : longSide;
+    int h = isDbl ? longSide : shortSide;
+
+    // 4. Uniform Spacing (Center tile in a 62dp cell)
+    int cellSize = (int) (50 * den);
+    int offsetX = (cellSize - w) / 2;
+    int offsetY = (cellSize - h) / 2;
+
+    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(w, h);
+    params.leftMargin = p.x + offsetX;
+    params.topMargin = p.y + offsetY;
+    dv.setLayoutParams(params);
+
+    // 5. Visual Highlight and Add to Board
+    if (lastPlayedTile != null) lastPlayedTile.setBackgroundColor(Color.TRANSPARENT);
+    dv.setBackgroundColor(Color.argb(50, 255, 255, 0));
     lastPlayedTile = dv;
-
+    
     boardContainer.addView(dv);
+
+    final int thisTileIdx = idx; // Capture the current index
+
+    dv.setOnClickListener(v -> {
+        if (isWaitingForSideChoice && pendingDomino != null) {
+            // If the user taps the tile at the left end
+            if (thisTileIdx == leftPathIdx) {
+                finishSideChoice(true);
+            }
+            // If the user taps the tile at the right end
+            else if (thisTileIdx == rightPathIdx - 1) {
+                finishSideChoice(false);
+            }
+        }
+    });
 }
 
-    private void handleHumanPass() {
-        if (!gameActive || currentPlayer != 0) return;
-        consecutivePasses++;
-        currentPlayer = 3;
-        runComputerPlayers(3);
+private void handleHumanPass() {
+    if (!gameActive || currentPlayer != 0 || isWaitingForSideChoice) return;
+
+    // 1. Check if the player ACTUALLY has a move
+    boolean hasMove = false;
+    ArrayList<Domino> hand = allHands.get(0);
+    
+    for (Domino d : hand) {
+        if (d.getSide1() == boardLeft || d.getSide2() == boardLeft ||
+            d.getSide1() == boardRight || d.getSide2() == boardRight) {
+            hasMove = true;
+            break;
+        }
     }
+
+    // 2. Only allow the pass if they have no moves
+    if (hasMove) {
+        Toast.makeText(this, "You have a move! Play your tile.", Toast.LENGTH_SHORT).show();
+    } else {
+        // Valid Knock
+        consecutivePasses++;
+        if (soundPool != null) soundPool.play(smackId, 1, 1, 0, 0, 0.5f); // Soft smack for knock
+        
+        turnIndicator.setText("YOU KNOCK!");
+        
+        if (consecutivePasses >= 4) {
+            resolveBlockedGame();
+        } else {
+            currentPlayer = 1; // Move to Player 1 (Computer)
+            new Handler().postDelayed(() -> {
+                if (gameActive) runComputerPlayers(currentPlayer);
+            }, 1000);
+        }
+    }
+}
 
     private boolean checkWin(int pIdx) {
         if (allHands.get(pIdx).isEmpty()) {
             gameActive = false;
-            if (pIdx == 0 || pIdx == 2) teamHumanSets++; else teamOpponentSets++;
+            if (pIdx == 0 || pIdx == 2)
+                teamHumanSets++;
+            else
+                teamOpponentSets++;
+
             turnIndicator.setText("WINNER: " + getPlayerName(pIdx));
-            updateStatus(); return true;
+            updateStatus();
+
+            // Wait 2 seconds so player sees the win, then fly tiles away
+            new Handler().postDelayed(() -> {
+                clearBoardWithAnimation(() -> setupJamaicanGame());
+            }, 2000);
+
+            return true;
         }
         return false;
     }
@@ -374,12 +388,30 @@ private void addTileToVisualBoard(Domino d, boolean atLeft) {
     private void resolveBlockedGame() {
         gameActive = false;
         int h = 0, o = 0;
-        for (int i=0; i<4; i++) {
-            int s = 0; for (Domino d : allHands.get(i)) s += (d.getSide1()+d.getSide2());
-            if (i==0 || i==2) h+=s; else o+=s;
+        
+        // Calculate totals for both teams
+        for (int i = 0; i < 4; i++) {
+            int s = 0; 
+            for (Domino d : allHands.get(i)) s += (d.getSide1() + d.getSide2());
+            if (i == 0 || i == 2) h += s; else o += s;
         }
-        if (h < o) teamHumanSets++; else teamOpponentSets++;
-        turnIndicator.setText("BLOCKED! " + (h < o ? "YOU WIN" : "OPPONENTS WIN"));
+    
+        if (h < o) {
+            teamHumanSets++;
+            turnIndicator.setText("BLOCKED! YOU WIN (" + h + " vs " + o + ")");
+        } else if (o < h) {
+            teamOpponentSets++;
+            turnIndicator.setText("BLOCKED! OPPONENTS WIN (" + o + " vs " + h + ")");
+        } else {
+            turnIndicator.setText("BLOCKED! IT'S A TIE!");
+        }
+    
+        updateStatus();
+    
+        // MISSING PIECE: Wait 3 seconds then reset, exactly like checkWin
+        new Handler().postDelayed(() -> {
+            clearBoardWithAnimation(() -> setupJamaicanGame());
+        }, 3000);
     }
 
     private void updateStatus() {
@@ -436,5 +468,102 @@ private void addTileToVisualBoard(Domino d, boolean atLeft) {
             if (count >= 4) { canvas.drawCircle(rt, t, r, pnt); canvas.drawCircle(l, b, r, pnt); }
             if (count == 6) { canvas.drawCircle(l, cy, r, pnt); canvas.drawCircle(rt, cy, r, pnt); }
         }
+    }
+
+    private void clearBoardWithAnimation(final Runnable onComplete) {
+        int childCount = boardContainer.getChildCount();
+        if (childCount == 0) {
+            onComplete.run();
+            return;
+        }
+
+        for (int i = 0; i < childCount; i++) {
+            View tile = boardContainer.getChildAt(i);
+            // Random "fly out" coordinates
+            float destX = (Math.random() > 0.5 ? 1 : -1) * 2000;
+            float destY = (Math.random() > 0.5 ? 1 : -1) * 2000;
+            float rotation = (float) (Math.random() * 720);
+
+            tile.animate()
+                    .translationX(destX)
+                    .translationY(destY)
+                    .rotation(rotation)
+                    .setDuration(800)
+                    .setStartDelay(i * 20) // Staggered "waterfall" effect
+                    .withEndAction(i == childCount - 1 ? onComplete : null)
+                    .start();
+        }
+    }
+
+    private void generatePath() {
+        pathPoints.clear();
+        pathDirections.clear();
+        // Pre-fill to avoid index out of bounds
+        for(int i=0; i<60; i++) {
+            pathPoints.add(new Point(0,0));
+            pathDirections.add(1);
+        }
+    
+        float den = getResources().getDisplayMetrics().density;
+        int screenW = getResources().getDisplayMetrics().widthPixels;
+        int screenH = getResources().getDisplayMetrics().heightPixels;
+    
+        int cellSize = (int) (50 * den);
+        int stepY = (int) (65 * den);
+        int centerX = (screenW / 2) - (cellSize / 2);
+        int centerY = (screenH / 2) - (cellSize / 2);
+    
+        // --- 1. THE CENTER (POSE) ---
+        pathPoints.set(20, new Point(centerX, centerY));
+        pathDirections.set(20, 1);
+    
+        // --- 2. GENERATE RIGHT SIDE (21 to 59) ---
+        int x = centerX + cellSize;
+        int y = centerY;
+        int dir = 1; // Moving Right
+        for (int i = 21; i < 60; i++) {
+            pathPoints.set(i, new Point(x, y));
+            pathDirections.set(i, dir);
+            
+            int nextX = x + (cellSize * dir);
+            if (nextX > screenW - (int) (70 * den) || nextX < (int) (30 * den)) {
+                dir *= -1;
+                y += stepY; // Move DOWN on the right
+            } else {
+                x = nextX;
+            }
+        }
+    
+        // --- 3. GENERATE LEFT SIDE (19 down to 0) ---
+        x = centerX - cellSize;
+        y = centerY;
+        dir = -1; // Moving Left
+        for (int i = 19; i >= 0; i--) {
+            pathPoints.set(i, new Point(x, y));
+            pathDirections.set(i, dir);
+    
+            int nextX = x + (cellSize * dir);
+            if (nextX > screenW - (int) (70 * den) || nextX < (int) (30 * den)) {
+                dir *= -1;
+                y -= stepY; // Move UP on the left
+            } else {
+                x = nextX;
+            }
+        }
+    }
+
+    private void finishSideChoice(boolean choseLeft) {
+        isWaitingForSideChoice = false;
+        if (pendingView != null)
+            pendingView.setAlpha(1.0f);
+
+        Domino d = pendingDomino;
+        View v = pendingView;
+
+        pendingDomino = null;
+        pendingView = null;
+
+        turnIndicator.setText("YOUR TURN");
+        playTile(d, v, choseLeft, 0);
     }
 }
