@@ -1,11 +1,11 @@
 R_DEF: Internal format may change without notice
 local
 drawable domino_tile
+drawable jamaican_button
 drawable text_border
 id boardContainer
 id mainRoot
 id matchScoreText
-id nextRoundButton
 id passButton
 id playerHandContainer
 id resetButton

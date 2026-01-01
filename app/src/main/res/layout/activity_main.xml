@@ -53,30 +53,43 @@
         android:orientation="horizontal"
         android:paddingBottom="10dp" />
 
-    <Button
-        android:id="@+id/passButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
-        android:text="KNOCK" />
+<Button
+    android:id="@+id/passButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/jamaican_button"
+    android:textColor="#FFEB3B"
+    android:textStyle="bold"
+    android:text="Knock"
+    android:textSize="18sp"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp"
+    android:minWidth="120dp" 
+    android:minHeight="60dp"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentBottom="true"
+    android:layout_margin="16dp" />
 
-    <Button
-        android:id="@+id/resetButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
-        android:text="RESET" />
+<Button
+    android:id="@+id/resetButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/jamaican_button"
+    android:textColor="#FFEB3B"
+    android:textStyle="bold"
+    android:text="Reset"
+    android:textSize="17sp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp"
+    android:minWidth="120dp"
+    android:minHeight="60dp"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentBottom="true"
+    android:layout_margin="16dp" />
 
-    <Button    
-        android:id="@+id/nextRoundButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Next Round"
-        android:visibility="gone" />
 
 </RelativeLayout>
