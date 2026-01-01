@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
 import android.view.MotionEvent;
+import android.widget.Button;
 
 
 public class MainActivity extends Activity {
@@ -59,7 +60,11 @@ public class MainActivity extends Activity {
     private int roundPoser = -1;
     private int lastWinner = -1;
 
+    private Button nextRoundButton;
+
     private RelativeLayout mainRoot; // Add mainRoot here
+
+    private Boolean isAnimating = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +87,12 @@ public class MainActivity extends Activity {
     
         findViewById(R.id.passButton).setOnClickListener(v -> handleHumanPass());
         findViewById(R.id.resetButton).setOnClickListener(v -> setupJamaicanGame());
+
+        nextRoundButton = findViewById(R.id.nextRoundButton);
+        nextRoundButton.setOnClickListener(v -> {
+            nextRoundButton.setVisibility(View.GONE);
+            clearBoardWithAnimation(() -> setupJamaicanGame());
+        });
 
         generatePath();
         setupJamaicanGame();
@@ -162,7 +173,7 @@ public class MainActivity extends Activity {
         dv.setLayoutParams(p);
 
         dv.setOnClickListener(v -> {
-            if (!gameActive || isWaitingForSideChoice || currentPlayer != 0)
+            if (isAnimating || !gameActive || isWaitingForSideChoice || currentPlayer != 0)
                 return;
 
             // 1. Pose Logic
@@ -208,6 +219,7 @@ public class MainActivity extends Activity {
     }
 
     private void playTile(Domino d, View v, boolean isLeft, int pIdx) {
+        isAnimating = true;
         int targetIdx;
         if (boardLeft == -1) {
             targetIdx = 20; // Center Pose
@@ -243,11 +255,13 @@ public class MainActivity extends Activity {
             rightPathIdx = targetIdx + 1; // Move right boundary up
         }
     
+        isAnimating = false;
         consecutivePasses = 0;
         updateStatus();
         if (checkWin(pIdx)) return;
     
         currentPlayer = (pIdx + 1) % 4; 
+        updateStatus();
         if (gameActive) {
             if (currentPlayer == 0) turnIndicator.setText("YOUR TURN");
             else runComputerPlayers(currentPlayer);
@@ -293,6 +307,7 @@ public class MainActivity extends Activity {
         } else {
             // MOVE TO NEXT PLAYER IMMEDIATELY
             currentPlayer = (pIdx + 1) % 4; 
+            updateStatus();
             new Handler().postDelayed(() -> {
                 if (gameActive) runComputerPlayers(currentPlayer);
             }, 1200); // 1.2s delay so you can see the knock
@@ -394,6 +409,7 @@ private void handleHumanPass() {
             resolveBlockedGame();
         } else {
             currentPlayer = (0 + 1) % 4; // Move to Player 1 (Computer)
+            updateStatus();
             new Handler().postDelayed(() -> {
                 if (gameActive) runComputerPlayers(currentPlayer);
             }, 1000);
@@ -405,6 +421,7 @@ private boolean checkWin(int pIdx) {
     if (allHands.get(pIdx).isEmpty()) {
         lastWinner = pIdx;
         gameActive = false;
+
         if (pIdx == 0 || pIdx == 2)
             teamHumanSets++;
         else
@@ -420,9 +437,8 @@ private boolean checkWin(int pIdx) {
         turnIndicator.setText("WINNER: " + getPlayerName(pIdx));
         
         // Only schedule a new round if no one has hit 6 yet
-        new Handler().postDelayed(() -> {
-            clearBoardWithAnimation(() -> setupJamaicanGame());
-        }, 2000);
+        nextRoundButton.setVisibility(View.VISIBLE);
+        nextRoundButton.bringToFront();
 
         return true;
     }
@@ -467,9 +483,8 @@ private void resolveBlockedGame() {
         return; 
     }
 
-    new Handler().postDelayed(() -> {
-        clearBoardWithAnimation(() -> setupJamaicanGame());
-    }, 5000); 
+    nextRoundButton.setVisibility(View.VISIBLE);
+    nextRoundButton.bringToFront();
 }
 
 private void updateStatus() {
@@ -477,8 +492,10 @@ private void updateStatus() {
     matchScoreText.setText("SETS - You: " + teamHumanSets + " | Opp: " + teamOpponentSets);
 
     // Refresh the visual hands for all players (since you removed the text count)
+    boolean reveal = !gameActive; 
+    
     for (int i = 1; i <= 3; i++) {
-        updatePlayerHandDisplay(i, false);
+        updatePlayerHandDisplay(i, reveal);
     }
 }
 
@@ -667,6 +684,9 @@ private void updateStatus() {
     private boolean checkMatchOver() {
         if (teamHumanSets >= 6 || teamOpponentSets >= 6) {
             gameActive = false;
+          
+            revealAllHands();// Reveal everyone's remaining tiles for the final tally
+
             String result;
     
             // Custom Jamaican Six-Love Messaging
@@ -693,8 +713,7 @@ private void updateStatus() {
             playerHandContainer.setEnabled(false);
             playerHandContainer.setAlpha(0.5f);
             
-            // Reveal everyone's remaining tiles for the final tally
-            revealAllHands();
+  
             
             return true;
         }
@@ -702,20 +721,8 @@ private void updateStatus() {
     }
 
     private void revealAllHands() {
-        playerHandContainer.removeAllViews();
-        float den = getResources().getDisplayMetrics().density;
-        for (int p = 1; p <= 3; p++) {
-            for (Domino d : allHands.get(p)) {
-                DominoView dv = new DominoView(this, d.getSide1(), d.getSide2(), true, false);
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams((int) (32 * den), (int) (52 * den));
-                lp.setMargins(4, 0, 4, 0);
-                dv.setLayoutParams(lp);
-                if (p == 0 || p == 2)
-                    dv.setBackgroundColor(Color.argb(30, 0, 255, 0));
-                else
-                    dv.setBackgroundColor(Color.argb(30, 255, 0, 0));
-                playerHandContainer.addView(dv);
-            }
+        for (int i = 1; i <= 3; i++) {
+            updatePlayerHandDisplay(i, true);
         }
     }
 
@@ -732,6 +739,11 @@ private void updateStatus() {
             boardContainer.addView(container);
         }
         
+        if (pIdx == currentPlayer && gameActive) {
+            container.setBackgroundColor(Color.argb(80, 255, 255, 255)); // Subtle white glow
+        } else {
+            container.setBackgroundColor(Color.TRANSPARENT);
+        }
         container.removeAllViews();
         float den = getResources().getDisplayMetrics().density;
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(-2, -2);

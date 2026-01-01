@@ -5,6 +5,7 @@ drawable text_border
 id boardContainer
 id mainRoot
 id matchScoreText
+id nextRoundButton
 id passButton
 id playerHandContainer
 id resetButton

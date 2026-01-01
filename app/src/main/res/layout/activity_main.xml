@@ -71,4 +71,12 @@
         android:layout_margin="10dp"
         android:text="RESET" />
 
+    <Button    
+        android:id="@+id/nextRoundButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Next Round"
+        android:visibility="gone" />
+
 </RelativeLayout>
