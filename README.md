@@ -1,1 +1,1 @@
-Jamaican Dominos for Android 1.0
+Jamaican Dominos for Android 1.0.0
