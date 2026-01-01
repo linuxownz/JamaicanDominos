@@ -1,18 +1,26 @@
 [
     {
+        "merged": "/home/codespace/.gradle/daemon/8.7/com.example.dominoes.app-merged_res-29:/layout_activity_splash.xml.flat",
+        "source": "/home/codespace/.gradle/daemon/8.7/com.example.dominoes.app-main-31:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "/home/codespace/.gradle/daemon/8.7/com.example.dominoes.app-merged_res-29:/drawable_text_border.xml.flat",
+        "source": "/home/codespace/.gradle/daemon/8.7/com.example.dominoes.app-main-31:/drawable/text_border.xml"
+    },
+    {
+        "merged": "/home/codespace/.gradle/daemon/8.7/com.example.dominoes.app-merged_res-29:/raw_smack.mp3.flat",
+        "source": "/home/codespace/.gradle/daemon/8.7/com.example.dominoes.app-main-31:/raw/smack.mp3"
+    },
+    {
         "merged": "com.example.dominoes.app-merged_res-29:/layout_activity_main.xml.flat",
         "source": "com.example.dominoes.app-main-31:/layout/activity_main.xml"
     },
     {
-        "merged": "com.example.dominoes.app-merged_res-29:/drawable_domino_tile.xml.flat",
-        "source": "com.example.dominoes.app-main-31:/drawable/domino_tile.xml"
+        "merged": "/home/codespace/.gradle/daemon/8.7/com.example.dominoes.app-merged_res-29:/layout_activity_main.xml.flat",
+        "source": "/home/codespace/.gradle/daemon/8.7/com.example.dominoes.app-main-31:/layout/activity_main.xml"
     },
     {
-        "merged": "com.example.dominoes.app-merged_res-29:/layout_activity_splash.xml.flat",
-        "source": "com.example.dominoes.app-main-31:/layout/activity_splash.xml"
-    },
-    {
-        "merged": "com.example.dominoes.app-merged_res-29:/raw_smack.mp3.flat",
-        "source": "com.example.dominoes.app-main-31:/raw/smack.mp3"
+        "merged": "/home/codespace/.gradle/daemon/8.7/com.example.dominoes.app-merged_res-29:/drawable_domino_tile.xml.flat",
+        "source": "/home/codespace/.gradle/daemon/8.7/com.example.dominoes.app-main-31:/drawable/domino_tile.xml"
     }
 ]

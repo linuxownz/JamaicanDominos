@@ -56,13 +56,19 @@ public class MainActivity extends Activity {
     private ArrayList<Integer> pathDirections = new ArrayList<>();
     private ArrayList<ArrayList<Domino>> allHands = new ArrayList<>();
 
+    private int roundPoser = -1;
+    private int lastWinner = -1;
+
+    private RelativeLayout mainRoot; // Add mainRoot here
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_main);
-    
-        countText = findViewById(R.id.countText);
+
+        mainRoot = findViewById(R.id.mainRoot); 
+        
         turnIndicator = findViewById(R.id.turnIndicator);
         matchScoreText = findViewById(R.id.matchScoreText);
         playerHandContainer = findViewById(R.id.playerHandContainer);
@@ -89,47 +95,63 @@ public class MainActivity extends Activity {
         
         leftPathIdx = 20; 
         rightPathIdx = 21;
-
         boardLeft = -1; boardRight = -1;
-        dirL = -1; dirR = 1;
-        consecutivePasses = 0;
         gameActive = true;
         lastPlayedTile = null;
-
+    
+        // Deal hands
         for (int p = 0; p < 4; p++) {
             ArrayList<Domino> hand = new ArrayList<>();
             for (int i = 0; i < 7; i++) hand.add(myDeck.draw());
             allHands.add(hand);
         }
     
-        int poser = -1; 
-        Domino d6 = null;
-        for (int p = 0; p < 4; p++) {
-            for (Domino d : allHands.get(p)) {
-                if (d.getSide1() == 6 && d.getSide2() == 6) { poser = p; d6 = d; break; }
+        int poser = -1;
+        Domino poseTile = null;
+    
+        if (lastWinner == -1) {
+            // FIRST GAME: Find who has 6-6
+            for (int p = 0; p < 4; p++) {
+                for (Domino d : allHands.get(p)) {
+                    if (d.getSide1() == 6 && d.getSide2() == 6) { 
+                        poser = p; 
+                        poseTile = d; 
+                        break; 
+                    }
+                }
             }
+        } else {
+            // SUBSEQUENT GAMES: The winner of the last round poses ANY tile they want
+            poser = lastWinner;
         }
     
+        // UI Updates
         for (Domino d : allHands.get(0)) addDominoToHandUI(d);
         updateStatus();
-
-        final int finalPoser = poser;
-        final Domino finalD6 = d6;
-
-        if (finalPoser == 0) {
-            currentPlayer = 0;
-            turnIndicator.setText("YOU HAVE THE 6-6! YOUR POSE.");
+        roundPoser = poser;
+        currentPlayer = poser;
+        if (poser == 0) {
+            turnIndicator.setText(lastWinner == -1 ? "YOU HAVE 6-6! YOUR POSE." : "YOU WON! CHOOSE ANY TILE TO POSE.");
         } else {
-            currentPlayer = finalPoser;
-            turnIndicator.setText(getPlayerName(finalPoser) + " HAS THE 6-6.");
-
-            // Now using the final copies inside the lambda
+            turnIndicator.setText(getPlayerName(poser) + " IS POSING...");
+            
+            // If computer is posing, they just play their first tile
+            final int finalPoser = poser;
+            final Domino finalPoseTile = poseTile;
             new Handler().postDelayed(() -> {
-                if (gameActive)
-                    playTile(finalD6, null, true, finalPoser);
+                if (gameActive) {
+                    // If it's the first game, they MUST play the 6-6
+                    // If it's not the first game, they play their first available tile
+                    Domino dToPlay = (finalPoseTile != null) ? finalPoseTile : allHands.get(finalPoser).get(0);
+                    playTile(dToPlay, null, true, finalPoser);
+                }
             }, 1500);
         }
 
+        updateStatus();
+        for (int i = 0; i < 4; i++) {
+            updatePlayerHandDisplay(i, false);
+        }
     }
 
     private void addDominoToHandUI(final Domino d) {
@@ -145,8 +167,17 @@ public class MainActivity extends Activity {
 
             // 1. Pose Logic
             if (boardLeft == -1) {
-                if (d.getSide1() == 6 && d.getSide2() == 6)
+                if (lastWinner == -1) {
+                    // FIRST GAME: Must be 6-6
+                    if (d.getSide1() == 6 && d.getSide2() == 6) {
+                        playTile(d, dv, true, 0);
+                    } else {
+                        Toast.makeText(this, "First game must pose with 6-6!", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    // SUBSEQUENT GAMES: Winner poses anything
                     playTile(d, dv, true, 0);
+                }
                 return;
             }
 
@@ -161,8 +192,9 @@ public class MainActivity extends Activity {
                 pendingDomino = d;
                 pendingView = dv;
                 dv.setAlpha(0.5f);
-                turnIndicator.setText("TAP LEFT OR RIGHT SIDE OF BOARD");
+                turnIndicator.setText("TAP LEFT OR RIGHT TILE ON THE BOARD");
 
+                highlightEndTiles(true);
 
             } else if (mL) {
                 playTile(d, dv, true, 0); // Only matches left
@@ -176,34 +208,49 @@ public class MainActivity extends Activity {
     }
 
     private void playTile(Domino d, View v, boolean isLeft, int pIdx) {
-        if (soundPool != null) soundPool.play(smackId, 1, 1, 0, 0, 1);
-        
-        addTileToVisualBoard(d, isLeft);
-
-        if (boardLeft == -1) { 
-            boardLeft = d.getSide1(); boardRight = d.getSide2(); 
-        } else if (isLeft) {
-            boardLeft = (d.getSide1() == boardLeft) ? d.getSide2() : d.getSide1();
+        int targetIdx;
+        if (boardLeft == -1) {
+            targetIdx = 20; // Center Pose
         } else {
-            boardRight = (d.getSide1() == boardRight) ? d.getSide2() : d.getSide1();
+            // We peek at the next available index
+            targetIdx = isLeft ? leftPathIdx - 1 : rightPathIdx;
         }
-
+    
+        // Start animation using this specific index
+        animateTileToBoard(d, v, targetIdx, pIdx, isLeft);
+        
+        // UI Cleanup
         allHands.get(pIdx).remove(d);
         if (v != null) playerHandContainer.removeView(v);
+        updatePlayerHandDisplay(pIdx, false);
+    }
+    
+    // New method to finish the logic after animation
+    private void completePlayTile(Domino d, boolean isLeft, int pIdx, int targetIdx) {
+        if (soundPool != null) soundPool.play(smackId, 1, 1, 0, 0, 1);
         
+        // Pass the index directly to the visual drawer
+        addTileToVisualBoard(d, isLeft, targetIdx);
+    
+        if (boardLeft == -1) { 
+            boardLeft = d.getSide1(); boardRight = d.getSide2(); 
+            // No index change needed for pose
+        } else if (isLeft) {
+            boardLeft = (d.getSide1() == boardLeft) ? d.getSide2() : d.getSide1();
+            leftPathIdx = targetIdx; // Update global tracker to the used index
+        } else {
+            boardRight = (d.getSide1() == boardRight) ? d.getSide2() : d.getSide1();
+            rightPathIdx = targetIdx + 1; // Move right boundary up
+        }
+    
         consecutivePasses = 0;
         updateStatus();
-        
         if (checkWin(pIdx)) return;
-
-        currentPlayer = (pIdx + 3) % 4; // Move to next player in clockwise rotation
-        
+    
+        currentPlayer = (pIdx + 1) % 4; 
         if (gameActive) {
-            if (currentPlayer == 0) {
-                turnIndicator.setText("YOUR TURN");
-            } else {
-                runComputerPlayers(currentPlayer);
-            }
+            if (currentPlayer == 0) turnIndicator.setText("YOUR TURN");
+            else runComputerPlayers(currentPlayer);
         }
     }
 
@@ -245,7 +292,7 @@ public class MainActivity extends Activity {
             resolveBlockedGame();
         } else {
             // MOVE TO NEXT PLAYER IMMEDIATELY
-            currentPlayer = (pIdx + 3) % 4; 
+            currentPlayer = (pIdx + 1) % 4; 
             new Handler().postDelayed(() -> {
                 if (gameActive) runComputerPlayers(currentPlayer);
             }, 1200); // 1.2s delay so you can see the knock
@@ -253,17 +300,7 @@ public class MainActivity extends Activity {
     }
 } 
 
-private void addTileToVisualBoard(Domino d, boolean atLeft) {
-    int idx;
-    if (boardLeft == -1) {
-        idx = 20; 
-    } else {
-        idx = atLeft ? --leftPathIdx : rightPathIdx++;
-    }
-
-    if (idx < 0) idx = 0;
-    if (idx >= pathPoints.size()) idx = pathPoints.size() - 1;
-
+private void addTileToVisualBoard(Domino d, boolean atLeft, int idx) {
     Point p = pathPoints.get(idx);
     int currentDir = pathDirections.get(idx); 
     float den = getResources().getDisplayMetrics().density;
@@ -356,7 +393,7 @@ private void handleHumanPass() {
         if (consecutivePasses >= 4) {
             resolveBlockedGame();
         } else {
-            currentPlayer = 1; // Move to Player 1 (Computer)
+            currentPlayer = (0 + 1) % 4; // Move to Player 1 (Computer)
             new Handler().postDelayed(() -> {
                 if (gameActive) runComputerPlayers(currentPlayer);
             }, 1000);
@@ -364,60 +401,86 @@ private void handleHumanPass() {
     }
 }
 
-    private boolean checkWin(int pIdx) {
-        if (allHands.get(pIdx).isEmpty()) {
-            gameActive = false;
-            if (pIdx == 0 || pIdx == 2)
-                teamHumanSets++;
-            else
-                teamOpponentSets++;
-
-            turnIndicator.setText("WINNER: " + getPlayerName(pIdx));
-            updateStatus();
-
-            // Wait 2 seconds so player sees the win, then fly tiles away
-            new Handler().postDelayed(() -> {
-                clearBoardWithAnimation(() -> setupJamaicanGame());
-            }, 2000);
-
-            return true;
-        }
-        return false;
-    }
-
-    private void resolveBlockedGame() {
+private boolean checkWin(int pIdx) {
+    if (allHands.get(pIdx).isEmpty()) {
+        lastWinner = pIdx;
         gameActive = false;
-        int h = 0, o = 0;
-        
-        // Calculate totals for both teams
-        for (int i = 0; i < 4; i++) {
-            int s = 0; 
-            for (Domino d : allHands.get(i)) s += (d.getSide1() + d.getSide2());
-            if (i == 0 || i == 2) h += s; else o += s;
-        }
-    
-        if (h < o) {
+        if (pIdx == 0 || pIdx == 2)
             teamHumanSets++;
-            turnIndicator.setText("BLOCKED! YOU WIN (" + h + " vs " + o + ")");
-        } else if (o < h) {
+        else
             teamOpponentSets++;
-            turnIndicator.setText("BLOCKED! OPPONENTS WIN (" + o + " vs " + h + ")");
-        } else {
-            turnIndicator.setText("BLOCKED! IT'S A TIE!");
-        }
-    
+
         updateStatus();
-    
-        // MISSING PIECE: Wait 3 seconds then reset, exactly like checkWin
+
+        // FIX: If match is over, stop here and do NOT run the Handler
+        if (checkMatchOver()) {
+            return true; 
+        }
+
+        turnIndicator.setText("WINNER: " + getPlayerName(pIdx));
+        
+        // Only schedule a new round if no one has hit 6 yet
         new Handler().postDelayed(() -> {
             clearBoardWithAnimation(() -> setupJamaicanGame());
-        }, 3000);
+        }, 2000);
+
+        return true;
+    }
+    return false;
+}
+
+private void resolveBlockedGame() {
+    gameActive = false;
+    int h = 0, o = 0;
+    
+    for (int i = 0; i < 4; i++) {
+        int s = 0; 
+        for (Domino d : allHands.get(i)) s += (d.getSide1() + d.getSide2());
+        if (i == 0 || i == 2) h += s; else o += s;
     }
 
-    private void updateStatus() {
-        countText.setText("P1: "+allHands.get(1).size()+" | Partner: "+allHands.get(2).size()+" | P3: "+allHands.get(3).size());
-        matchScoreText.setText("SETS - You: " + teamHumanSets + " | Opp: " + teamOpponentSets);
+    if (h < o) {
+        lastWinner = 0; // Human team wins
+        teamHumanSets++;
+        turnIndicator.setText("BLOCKED! YOU WIN (" + h + " vs " + o + ")");
+    } else if (o < h) {
+        lastWinner = 1; // Opponent team wins (Player 1)
+        teamOpponentSets++;
+        turnIndicator.setText("BLOCKED! OPPONENTS WIN (" + o + " vs " + h + ")");
+    } else {
+        // TIE BREAKER: The team that DID NOT pose wins the tie
+        if (roundPoser == 0 || roundPoser == 2) {
+            lastWinner = 1; 
+            teamOpponentSets++;
+            turnIndicator.setText("TIE! OPPONENTS WIN (You Posed)");
+        } else {
+            lastWinner = 0;
+            teamHumanSets++;
+            turnIndicator.setText("TIE! YOU WIN (They Posed)");
+        }
     }
+
+    updateStatus();
+    revealAllHands(); 
+
+    if (checkMatchOver()) {
+        return; 
+    }
+
+    new Handler().postDelayed(() -> {
+        clearBoardWithAnimation(() -> setupJamaicanGame());
+    }, 5000); 
+}
+
+private void updateStatus() {
+    // Only update the Match Sets score
+    matchScoreText.setText("SETS - You: " + teamHumanSets + " | Opp: " + teamOpponentSets);
+
+    // Refresh the visual hands for all players (since you removed the text count)
+    for (int i = 1; i <= 3; i++) {
+        updatePlayerHandDisplay(i, false);
+    }
+}
 
     private String getPlayerName(int i) {
         String[] n = {"You", "Player 1", "Partner", "Player 3"};
@@ -428,26 +491,38 @@ private void handleHumanPass() {
         private int s1, s2;
         private boolean isVertical, isHidden;
         private Paint pnt = new Paint(Paint.ANTI_ALIAS_FLAG);
-
+    
         public DominoView(Context context, int s1, int s2, boolean isVertical, boolean isHidden) {
             super(context);
             this.s1 = s1; this.s2 = s2; this.isVertical = isVertical; this.isHidden = isHidden;
         }
-
+    
         @Override
         protected void onDraw(Canvas canvas) {
             float w = getWidth(), h = getHeight();
             RectF r = new RectF(2, 2, w - 2, h - 2);
+            
+            // 1. Draw Background
             pnt.setStyle(Paint.Style.FILL);
-            pnt.setColor(isHidden ? Color.parseColor("#D2B48C") : Color.WHITE);
+            // If hidden: Dark Green (Jamaican theme), If revealed: White
+            pnt.setColor(isHidden ? Color.parseColor("#2E7D32") : Color.WHITE);
             canvas.drawRoundRect(r, 8, 8, pnt);
+    
+            // 2. Draw Outline/Border
             pnt.setStyle(Paint.Style.STROKE);
-            pnt.setColor(Color.BLACK);
+            pnt.setStrokeWidth(3);
+            // Border should be dark or black so it's visible on white
+            pnt.setColor(isHidden ? Color.parseColor("#1B5E20") : Color.BLACK);
             canvas.drawRoundRect(r, 8, 8, pnt);
+    
             if (!isHidden) {
+                // 3. Draw Center Dividing Line
                 if (isVertical) canvas.drawLine(0, h/2, w, h/2, pnt);
                 else canvas.drawLine(w/2, 0, w/2, h, pnt);
+    
+                // 4. Draw Pips (Always black)
                 pnt.setStyle(Paint.Style.FILL);
+                pnt.setColor(Color.BLACK); 
                 float rad = Math.min(w, h) * 0.08f;
                 if (isVertical) {
                     drawPips(canvas, s1, new RectF(0, 0, w, h/2), rad);
@@ -458,7 +533,7 @@ private void handleHumanPass() {
                 }
             }
         }
-
+    
         private void drawPips(Canvas canvas, int count, RectF area, float r) {
             float cx = area.centerX(), cy = area.centerY();
             float l = area.left + area.width() * 0.25f, rt = area.left + area.width() * 0.75f;
@@ -565,5 +640,188 @@ private void handleHumanPass() {
 
         turnIndicator.setText("YOUR TURN");
         playTile(d, v, choseLeft, 0);
+    }
+
+    private void highlightEndTiles(boolean show) {
+        for (int i = 0; i < boardContainer.getChildCount(); i++) {
+            View child = boardContainer.getChildAt(i);
+            // Reset all tiles to transparent first
+            child.setBackgroundColor(Color.TRANSPARENT);
+
+            if (show) {
+                // Check if this specific view is one of the ends
+                // We can check the LayoutParams to match the coordinates
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) child.getLayoutParams();
+                Point pL = pathPoints.get(leftPathIdx);
+                Point pR = pathPoints.get(rightPathIdx - 1);
+
+                // If the tile's position matches an end point, highlight it
+                if ((lp.leftMargin >= pL.x && lp.leftMargin <= pL.x + 50) ||
+                        (lp.leftMargin >= pR.x && lp.leftMargin <= pR.x + 50)) {
+                    child.setBackgroundColor(Color.argb(150, 255, 255, 0)); // Semi-transparent yellow
+                }
+            }
+        }
+    }
+
+    private boolean checkMatchOver() {
+        if (teamHumanSets >= 6 || teamOpponentSets >= 6) {
+            gameActive = false;
+            String result;
+    
+            // Custom Jamaican Six-Love Messaging
+            if (teamHumanSets == 6 && teamOpponentSets == 0) {
+                result = "SIX-LOVE! YOU GAVE THEM A WASH!";
+                turnIndicator.setTextColor(Color.parseColor("#4CAF50")); // Winner Green
+            } else if (teamOpponentSets == 6 && teamHumanSets == 0) {
+                result = "SIX-LOVE! YOU GOT WASHED!";
+                turnIndicator.setTextColor(Color.parseColor("#F44336")); // Loser Red
+            } else if (teamHumanSets >= 6) {
+                result = "MATCH OVER! YOU WIN " + teamHumanSets + "-" + teamOpponentSets;
+                turnIndicator.setTextColor(Color.YELLOW);
+            } else {
+                result = "MATCH OVER! OPPONENTS WIN " + teamOpponentSets + "-" + teamHumanSets;
+                turnIndicator.setTextColor(Color.YELLOW);
+            }
+    
+            // Make the text pop since it's now in the corner
+            turnIndicator.setText(result);
+            turnIndicator.setTextSize(20f); 
+            
+            // Disable the board and hands
+            boardContainer.setAlpha(0.4f);
+            playerHandContainer.setEnabled(false);
+            playerHandContainer.setAlpha(0.5f);
+            
+            // Reveal everyone's remaining tiles for the final tally
+            revealAllHands();
+            
+            return true;
+        }
+        return false;
+    }
+
+    private void revealAllHands() {
+        playerHandContainer.removeAllViews();
+        float den = getResources().getDisplayMetrics().density;
+        for (int p = 1; p <= 3; p++) {
+            for (Domino d : allHands.get(p)) {
+                DominoView dv = new DominoView(this, d.getSide1(), d.getSide2(), true, false);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams((int) (32 * den), (int) (52 * den));
+                lp.setMargins(4, 0, 4, 0);
+                dv.setLayoutParams(lp);
+                if (p == 0 || p == 2)
+                    dv.setBackgroundColor(Color.argb(30, 0, 255, 0));
+                else
+                    dv.setBackgroundColor(Color.argb(30, 255, 0, 0));
+                playerHandContainer.addView(dv);
+            }
+        }
+    }
+
+    private void updatePlayerHandDisplay(int pIdx, boolean reveal) {
+        if (pIdx == 0) 
+            return;
+
+        String tag = "hand_container_" + pIdx;
+        LinearLayout container = boardContainer.findViewWithTag(tag);
+        
+        if (container == null) {
+            container = new LinearLayout(this);
+            container.setTag(tag);
+            boardContainer.addView(container);
+        }
+        
+        container.removeAllViews();
+        float den = getResources().getDisplayMetrics().density;
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(-2, -2);
+    
+        if (pIdx == 0) { // BOTTOM (You)
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            params.bottomMargin = (int) (100 * den); // High enough to stay above playerHandContainer
+        } else if (pIdx == 1) { // LEFT (P1)
+            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            params.addRule(RelativeLayout.CENTER_VERTICAL);
+            params.leftMargin = (int) (10 * den);
+            params.topMargin = (int) (60 * den); // Offset to clear the Score Text
+            container.setOrientation(LinearLayout.VERTICAL);
+        } else if (pIdx == 2) { // TOP (Partner)
+            params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+            params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            params.topMargin = (int) (10 * den);
+        } else if (pIdx == 3) { // RIGHT (P3)
+            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            params.addRule(RelativeLayout.CENTER_VERTICAL);
+            params.rightMargin = (int) (10 * den);
+            params.topMargin = (int) (60 * den); // Offset to clear the Turn Indicator
+            container.setOrientation(LinearLayout.VERTICAL);
+        }
+        
+        container.setLayoutParams(params);
+    
+        for (Domino d : allHands.get(pIdx)) {
+            boolean vertical = (pIdx == 0 || pIdx == 2);
+            DominoView dv = new DominoView(this, d.getSide1(), d.getSide2(), vertical, !reveal);
+            
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                (int)((vertical ? 24 : 40) * den), 
+                (int)((vertical ? 40 : 24) * den)
+            );
+            lp.setMargins(2, 2, 2, 2);
+            dv.setLayoutParams(lp);
+            container.addView(dv);
+        }
+    }
+
+    private void animateTileToBoard(Domino d, View sourceView, int targetIdx, int pIdx, boolean isLeft) {
+        float den = getResources().getDisplayMetrics().density;
+        
+        // 1. Determine orientation for the ghost
+        boolean isDbl = (d.getSide1() == d.getSide2());
+        int w = isDbl ? (int)(30 * den) : (int)(48 * den);
+        int h = isDbl ? (int)(48 * den) : (int)(30 * den);
+        int cellSize = (int) (50 * den);
+    
+        // Create ghost (isHidden = false so pips are visible during flight)
+        final DominoView ghost = new DominoView(this, d.getSide1(), d.getSide2(), isDbl, false);
+    
+        // 2. Get Start Position
+        int[] startLoc = new int[2];
+        if (sourceView != null) {
+            sourceView.getLocationInWindow(startLoc);
+        } else {
+            View container = boardContainer.findViewWithTag("hand_container_" + pIdx);
+            if (container != null) container.getLocationInWindow(startLoc);
+            else boardContainer.getLocationInWindow(startLoc);
+        }
+    
+        // 3. Get End Position + Centering Offset
+        Point p = pathPoints.get(targetIdx);
+        int offsetX = (cellSize - w) / 2;
+        int offsetY = (cellSize - h) / 2;
+    
+        float destX = p.x + offsetX + boardContainer.getX();
+        float destY = p.y + offsetY + boardContainer.getY();
+    
+        // 4. Setup and Add Ghost
+        ghost.setLayoutParams(new RelativeLayout.LayoutParams(w, h));
+        mainRoot.addView(ghost);
+        
+        // We use setX/Y to position it in the root coordinate system
+        ghost.setX(startLoc[0]);
+        ghost.setY(startLoc[1]);
+    
+        // 5. Animate to destination
+        ghost.animate()
+            .x(destX)
+            .y(destY)
+            .setDuration(450)
+            .setInterpolator(new android.view.animation.DecelerateInterpolator())
+            .withEndAction(() -> {
+                mainRoot.removeView(ghost);
+                // FIXED: Passing targetIdx here resolves the compiler error
+                completePlayTile(d, isLeft, pIdx, targetIdx); 
+            }).start();
     }
 }

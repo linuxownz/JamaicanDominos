@@ -1,9 +1,9 @@
 R_DEF: Internal format may change without notice
 local
 drawable domino_tile
+drawable text_border
 id boardContainer
-id countText
-id header
+id mainRoot
 id matchScoreText
 id passButton
 id playerHandContainer

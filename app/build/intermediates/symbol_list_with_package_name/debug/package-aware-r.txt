@@ -3019,6 +3019,7 @@ drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
 drawable test_level_drawable
+drawable text_border
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
 id ALT
@@ -3155,7 +3156,6 @@ id contiguous
 id continuousVelocity
 id coordinator
 id cos
-id countText
 id counterclockwise
 id cradle
 id currentState
@@ -3233,7 +3233,6 @@ id graph_wrap
 id group_divider
 id grouping
 id groups
-id header
 id header_title
 id hideable
 id home
@@ -3267,6 +3266,7 @@ id linear
 id listMode
 id list_item
 id m3_side_sheet
+id mainRoot
 id marquee
 id masked
 id matchScoreText

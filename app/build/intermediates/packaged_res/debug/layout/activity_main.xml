@@ -1,52 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" 
+    android:id="@+id/mainRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1B5E20">
 
-    <LinearLayout
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="5dp">
-
-        <TextView
-            android:id="@+id/matchScoreText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="SETS - You: 0 | Opp: 0"
-            android:textColor="#FFFFFF"
-            android:gravity="center"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/turnIndicator"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="YOUR TURN"
-            android:textColor="#FFEB3B"
-            android:gravity="center"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/boardContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true" />
-
     <TextView
-        android:id="@+id/countText"
+        android:id="@+id/matchScoreText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/playerHandContainer"
-        android:layout_centerHorizontal="true"
-        android:text="P1: 7 | Partner: 7 | P3: 7"
-        android:textColor="#CCCCCC"
-        android:layout_marginBottom="5dp"/>
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="15dp"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="SETS - You: 0 | Opp: 0" />
+
+<TextView
+    android:id="@+id/turnIndicator"
+    android:layout_width="200dp" 
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentRight="true"
+    android:layout_marginTop="12dp"
+    android:layout_marginRight="15dp"
+    android:background="@drawable/text_border"
+    android:maxLines="1"
+    android:gravity="right|center_vertical"
+    android:textColor="#FFEB3B"
+    android:textStyle="bold"
+    app:autoSizeTextType="uniform"
+    app:autoSizeMinTextSize="10sp"
+    app:autoSizeMaxTextSize="18sp"
+    app:autoSizeStepGranularity="1sp" />
+
+<RelativeLayout
+    android:id="@+id/boardContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentBottom="true" />
 
     <LinearLayout
         android:id="@+id/playerHandContainer"
@@ -55,7 +51,7 @@
         android:layout_alignParentBottom="true"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="10dp" />
+        android:paddingBottom="10dp" />
 
     <Button
         android:id="@+id/passButton"
@@ -63,6 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
         android:text="KNOCK" />
 
     <Button
@@ -71,6 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
         android:text="RESET" />
 
 </RelativeLayout>
