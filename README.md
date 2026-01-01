@@ -1,1 +1,1 @@
-# AndroidTestApp
+# Jamaican Dominos for Android
