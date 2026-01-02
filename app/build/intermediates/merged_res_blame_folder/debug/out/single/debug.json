@@ -4,6 +4,10 @@
         "source": "/home/codespace/.gradle/daemon/8.7/com.example.dominoes.app-main-31:/layout/activity_splash.xml"
     },
     {
+        "merged": "/home/codespace/.gradle/daemon/8.7/com.example.dominoes.app-merged_res-29:/menu_settings_menu.xml.flat",
+        "source": "/home/codespace/.gradle/daemon/8.7/com.example.dominoes.app-main-31:/menu/settings_menu.xml"
+    },
+    {
         "merged": "/home/codespace/.gradle/daemon/8.7/com.example.dominoes.app-merged_res-29:/drawable_text_border.xml.flat",
         "source": "/home/codespace/.gradle/daemon/8.7/com.example.dominoes.app-main-31:/drawable/text_border.xml"
     },

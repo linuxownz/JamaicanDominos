@@ -92,4 +92,17 @@
     android:layout_margin="16dp" />
 
 
+<ImageButton
+    android:id="@+id/settingsButton"
+    android:layout_width="50dp"
+    android:layout_height="50dp"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentLeft="true"
+    android:layout_margin="12dp"
+    android:paddingTop="35dp"
+    android:background="?android:attr/selectableItemBackgroundBorderless"
+    android:src="@android:drawable/ic_menu_sort_by_size"
+    android:tint="#FFEB3B" 
+    android:contentDescription="Settings" />
+
 </RelativeLayout>

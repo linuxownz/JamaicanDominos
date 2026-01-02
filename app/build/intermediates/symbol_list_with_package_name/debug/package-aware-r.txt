@@ -3294,6 +3294,8 @@ id material_timepicker_ok_button
 id material_timepicker_view
 id material_value_index
 id matrix
+id menu_how_to_play
+id menu_sound
 id message
 id middle
 id mini
@@ -3422,6 +3424,7 @@ id search_voice_btn
 id select_dialog_listview
 id selected
 id selection_type
+id settingsButton
 id sharedValueSet
 id sharedValueUnset
 id shortcut
@@ -3726,6 +3729,7 @@ layout select_dialog_item_material
 layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
 layout support_simple_spinner_dropdown_item
+menu settings_menu
 plurals mtrl_badge_content_description
 raw smack
 string abc_action_bar_home_description
@@ -4170,6 +4174,9 @@ style Base_Widget_MaterialComponents_TextView
 style CardView
 style CardView_Dark
 style CardView_Light
+style JamaicanDialog
+style JamaicanMenuTextAppearance
+style JamaicanPopupMenu
 style MaterialAlertDialog_Material3
 style MaterialAlertDialog_Material3_Animation
 style MaterialAlertDialog_Material3_Body_Text

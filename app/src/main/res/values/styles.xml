@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="JamaicanDialog" parent="android:Theme.DeviceDefault.Dialog.Alert">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:background">#1B5E20</item> <item name="android:textColorPrimary">#FFEB3B</item> </style>
+
+    <style name="JamaicanPopupMenu" parent="android:Widget.DeviceDefault.Light.PopupMenu">
+        <item name="android:itemBackground">#1B5E20</item> </style>
+
+    <style name="JamaicanMenuTextAppearance" parent="android:TextAppearance.DeviceDefault.Widget.PopupMenu.Large">
+        <item name="android:textColor">#FFEB3B</item> <item name="android:textStyle">bold</item>
+    </style>
+
+</resources>

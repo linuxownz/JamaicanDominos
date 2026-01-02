@@ -20,6 +20,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import android.view.MotionEvent;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
+import android.app.AlertDialog;
+import android.content.SharedPreferences;
 
 public class MainActivity extends Activity {
 
@@ -64,6 +68,10 @@ public class MainActivity extends Activity {
     private Boolean isAnimating = false;
     private android.widget.Button resetButton = null;
 
+    private Boolean playSound = true;
+
+    private android.content.SharedPreferences prefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,8 +108,27 @@ public class MainActivity extends Activity {
             }
         });
 
+        prefs = getSharedPreferences("DominoPrefs", MODE_PRIVATE);
+        playSound = prefs.getBoolean("playSound", true);
+
+        teamHumanSets    = prefs.getInt("humanScore", 0);
+        teamOpponentSets = prefs.getInt("opponentsScore", 0);
+
         generatePath();
         setupJamaicanGame();
+
+        ImageButton settingsBtn = findViewById(R.id.settingsButton);
+        settingsBtn.setOnClickListener(v -> showSettingsMenu(v));
+
+    }
+
+    protected void onStop() {
+        super.onStop();
+
+        android.content.SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("humanScore", teamHumanSets);
+        editor.putInt("opponentsScore", teamOpponentSets);
+        editor.apply();
     }
 
     private void setupJamaicanGame() {
@@ -263,7 +290,7 @@ public class MainActivity extends Activity {
 
     // New method to finish the logic after animation
     private void completePlayTile(Domino d, boolean isLeft, int pIdx, int targetIdx) {
-        if (soundPool != null)
+        if (soundPool != null && playSound)
             soundPool.play(smackId, 1, 1, 0, 0, 1);
 
         // Pass the index directly to the visual drawer
@@ -454,7 +481,7 @@ public class MainActivity extends Activity {
         } else {
             // Valid Knock
             consecutivePasses++;
-            if (soundPool != null)
+            if (soundPool != null && playSound)
                 soundPool.play(smackId, 1, 1, 0, 0, 0.5f); // Soft smack for knock
 
             turnIndicator.setText("YOU KNOCK!");
@@ -933,5 +960,58 @@ public class MainActivity extends Activity {
         for (Domino d : hand) {
             addDominoToHandUI(d);
         }
+    }
+
+    private void showSettingsMenu(View v) {
+        Context wrapper = new android.view.ContextThemeWrapper(this, R.style.JamaicanPopupMenu);
+        PopupMenu popup = new PopupMenu(wrapper, v);
+
+        popup.getMenuInflater().inflate(R.menu.settings_menu, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.menu_sound) {
+
+                playSound = !playSound;
+                android.content.SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean("playSound", playSound);
+                editor.apply();
+
+                Toast.makeText(this, playSound ? "Sound enabled" : "Sound disabled", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (id == R.id.menu_how_to_play) {
+                showRulesDialog();
+                return true;
+            }
+            return false;
+        });
+        popup.show();
+    }
+
+    private void showRulesDialog() {
+        // 1. Create the builder with the custom theme
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.JamaicanDialog);
+        
+        builder.setTitle("JAMAICAN RULES")
+               .setMessage("1. First game: 6-6 poses.\n2. Winner of round poses next.\n3. Goal: Reach 6 sets (The Wash!).")
+               .setPositiveButton("READY TO PLAY", null);
+    
+        // 2. Create and show the dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    
+        // 3. Stylize the Button specifically (after show() is called)
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        if (positiveButton != null) {
+            positiveButton.setTextColor(Color.parseColor("#FFEB3B")); // Jamaican Yellow
+            positiveButton.setTypeface(null, android.graphics.Typeface.BOLD);
+        }
+        
+        // 4. Stylize the Title and Message color manually if the theme doesn't catch it
+        TextView titleView = dialog.findViewById(android.R.id.title);
+        if (titleView != null) titleView.setTextColor(Color.parseColor("#FFEB3B"));
+    
+        TextView messageView = dialog.findViewById(android.R.id.message);
+        if (messageView != null) messageView.setTextColor(Color.WHITE);
     }
 }

@@ -6,10 +6,17 @@ drawable text_border
 id boardContainer
 id mainRoot
 id matchScoreText
+id menu_how_to_play
+id menu_sound
 id passButton
 id playerHandContainer
 id resetButton
+id settingsButton
 id turnIndicator
 layout activity_main
 layout activity_splash
+menu settings_menu
 raw smack
+style JamaicanDialog
+style JamaicanMenuTextAppearance
+style JamaicanPopupMenu
